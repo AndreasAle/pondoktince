@@ -13,8 +13,10 @@ PHP_BIN="php"
 
 export COMPOSER_ALLOW_SUPERUSER=1
 
-echo ">> git pull origin main"
-git pull origin main
+echo ">> sync ke origin/main (hard reset — server tidak menyimpan commit lokal)"
+git fetch origin main
+git reset --hard origin/main
+# Catatan: .env & symlink public/storage tidak ter-track git, jadi aman (tidak terhapus).
 
 echo ">> composer install (production)"
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
