@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Playfair Display', ui-serif, Georgia, serif;
+
+    /* Brand palette — warm premium culinary (Palembang) */
+    --color-maroon-50: #fbf3f2;
+    --color-maroon-100: #f6e0dd;
+    --color-maroon-300: #d99b93;
+    --color-maroon-500: #a83d33;
+    --color-maroon-600: #8f2f26;
+    --color-maroon-700: #7a1f1f;
+    --color-maroon-800: #611a19;
+    --color-maroon-900: #4a1615;
+
+    --color-gold-300: #e2c878;
+    --color-gold-400: #d4af52;
+    --color-gold-500: #c79a3a;
+    --color-gold-600: #a67d29;
+
+    --color-cream-50: #fdfbf6;
+    --color-cream-100: #f7f1e6;
+    --color-cream-200: #efe4d1;
+
+    --color-charcoal: #241d1b;
+}
+
+[x-cloak] { display: none !important; }
+
+@layer components {
+    .container-x {
+        @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+    }
+
+    .btn, .btn-primary, .btn-gold, .btn-wa, .btn-outline {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    }
+
+    .btn-primary {
+        @apply bg-maroon-700 text-cream-50 hover:bg-maroon-800 focus:ring-maroon-500;
+    }
+
+    .btn-gold {
+        @apply bg-gold-500 text-charcoal hover:bg-gold-600 focus:ring-gold-400;
+    }
+
+    .btn-wa {
+        @apply bg-[#25D366] text-white hover:bg-[#1ebe5b] focus:ring-green-400;
+    }
+
+    .btn-outline {
+        @apply border border-maroon-700/30 bg-white/70 text-maroon-800 hover:border-maroon-700 hover:bg-white;
+    }
+
+    .eyebrow {
+        @apply inline-block text-xs font-semibold uppercase tracking-[0.18em] text-gold-600;
+    }
+
+    .h-display {
+        @apply font-display font-bold leading-tight text-charcoal;
+    }
+
+    .card {
+        @apply rounded-2xl border border-cream-200 bg-white shadow-sm transition hover:shadow-md;
+    }
+
+    .prose-content {
+        @apply text-[15px] leading-relaxed text-charcoal/80;
+    }
+    .prose-content h2 { @apply mt-8 mb-3 font-display text-2xl font-bold text-charcoal; }
+    .prose-content h3 { @apply mt-6 mb-2 font-display text-xl font-semibold text-charcoal; }
+    .prose-content p { @apply mb-4; }
+    .prose-content ul { @apply mb-4 list-disc space-y-1 pl-5; }
+    .prose-content a { @apply text-maroon-700 underline underline-offset-2; }
+}

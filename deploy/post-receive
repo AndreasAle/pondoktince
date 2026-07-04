@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Git post-receive hook for Hostinger shared hosting.
+# Place this file at:  ~/repos/pondoktince.git/hooks/post-receive
+# Then: chmod +x ~/repos/pondoktince.git/hooks/post-receive
+#
+# Every `git push production main` checks the code out into $APP_DIR and runs
+# the deploy steps. The server .env is NOT tracked by git, so it survives deploys.
+
+APP_DIR="$HOME/pondoktince"
+GIT_DIR="$HOME/repos/pondoktince.git"
+BRANCH="main"
+
+# Use a specific PHP binary if `php` is not 8.2+. Check with `php -v` and, if
+# needed, set e.g. PHP_BIN="/usr/bin/php8.2" (Hostinger sometimes exposes php8.2).
+PHP_BIN="php"
+
+while read oldrev newrev ref; do
+    if [ "$ref" != "refs/heads/$BRANCH" ]; then
+        echo ">> Ref $ref is not $BRANCH — skipping."
+        continue
+    fi
+
+    echo ">> Deploying $BRANCH into $APP_DIR"
+    mkdir -p "$APP_DIR"
+    git --work-tree="$APP_DIR" --git-dir="$GIT_DIR" checkout -f "$BRANCH"
+    cd "$APP_DIR" || exit 1
+
+    export COMPOSER_ALLOW_SUPERUSER=1
+    echo ">> composer install (production)"
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+    if [ -f "$APP_DIR/.env" ]; then
+        echo ">> Running migrations & rebuilding caches"
+        "$PHP_BIN" artisan storage:link 2>/dev/null || true
+        "$PHP_BIN" artisan migrate --force
+        "$PHP_BIN" artisan optimize:clear
+        "$PHP_BIN" artisan config:cache
+        "$PHP_BIN" artisan route:cache
+        "$PHP_BIN" artisan view:cache
+        echo ">> Deploy complete."
+    else
+        echo "!! .env not found in $APP_DIR."
+        echo "!! First-time setup: create .env, then run once:"
+        echo "!!   $PHP_BIN artisan key:generate"
+        echo "!!   $PHP_BIN artisan migrate --seed --force"
+        echo "!!   $PHP_BIN artisan storage:link"
+        echo "!! Future pushes will then deploy automatically."
+    fi
+done

@@ -1,0 +1,12 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "pondoktince",
+            "runtimeExecutable": "php",
+            "runtimeArgs": ["artisan", "serve", "--port=8093"],
+            "port": 8093,
+            "autoPort": false
+        }
+    ]
+}
