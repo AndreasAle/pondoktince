@@ -308,8 +308,11 @@
 </section>
 @endif
 
+{{-- ================= INSTAGRAM FEED (dikelola dari admin) ================= --}}
+<x-instagram-feed title="Ikuti Kami di Instagram" :limit="8" muted />
+
 {{-- ================= LOCATION ================= --}}
-<section class="bg-cream-100 py-16 lg:py-24">
+<section class="py-16 lg:py-24">
     <div class="container-x grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
             <x-section-heading eyebrow="Lokasi" title="Mampir &amp; Rasakan Kehangatannya" />
