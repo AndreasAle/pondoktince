@@ -2,11 +2,13 @@
         @scroll.window="scrolled = window.scrollY > 20"
         class="sticky top-0 z-40 border-b border-cream-200/70 bg-cream-50/90 backdrop-blur transition"
         :class="scrolled && 'shadow-sm'">
-    <div class="container-x flex h-16 items-center justify-between gap-4 lg:h-20">
+    <div class="container-x flex min-h-16 items-center justify-between gap-4 py-2 lg:min-h-20">
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="flex items-center gap-2">
             @if($siteSettings->logo_path)
-                <img src="{{ media_url($siteSettings->logo_path) }}" alt="{{ $siteSettings->site_name }}" class="h-10 w-auto lg:h-12">
+                <img src="{{ media_url($siteSettings->logo_path) }}" alt="{{ $siteSettings->site_name }}"
+                     class="w-auto max-w-[70vw] object-contain"
+                     style="height: {{ $siteSettings->logo_height ?: 48 }}px;">
             @else
                 <span class="font-display text-xl font-bold text-maroon-700 lg:text-2xl">{{ $siteSettings->site_name ?: 'Pondok Tince' }}</span>
             @endif

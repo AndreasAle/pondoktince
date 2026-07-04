@@ -43,6 +43,13 @@ class ManageSiteSettings extends Page implements HasForms
                         Forms\Components\TextInput::make('site_name')->label('Nama website')->required(),
                         Forms\Components\TextInput::make('tagline')->label('Tagline'),
                         Forms\Components\FileUpload::make('logo_path')->label('Logo')->image()->directory('site')->maxSize(2048),
+                        Forms\Components\TextInput::make('logo_height')
+                            ->label('Tinggi logo (header)')
+                            ->numeric()
+                            ->minValue(24)->maxValue(160)->step(2)
+                            ->default(48)
+                            ->suffix('px')
+                            ->helperText('Atur tinggi logo di header. Lebar menyesuaikan otomatis. Umumnya 40–80px.'),
                         Forms\Components\FileUpload::make('favicon_path')->label('Favicon')->image()->directory('site')->maxSize(1024),
                         Forms\Components\FileUpload::make('default_og_image_path')->label('Default OG image')->image()->directory('site')->maxSize(4096),
                         Forms\Components\Grid::make(2)->schema([
