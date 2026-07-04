@@ -67,7 +67,44 @@
     }
 
     .card {
-        @apply rounded-2xl border border-cream-200 bg-white shadow-sm transition hover:shadow-md;
+        @apply rounded-2xl border border-cream-200/80 bg-white transition duration-300;
+        box-shadow: 0 8px 24px -16px rgba(74, 22, 21, 0.28);
+    }
+    .card:hover {
+        @apply -translate-y-1 border-gold-300;
+        box-shadow: 0 22px 44px -22px rgba(74, 22, 21, 0.4);
+    }
+
+    /* Elegant fallback for cards/images that have no photo yet */
+    .placeholder-food {
+        @apply flex h-full w-full items-center justify-center text-maroon-300/70;
+        background-image:
+            radial-gradient(circle at 30% 25%, rgba(199, 154, 58, 0.10), transparent 55%),
+            linear-gradient(135deg, var(--color-cream-100), var(--color-cream-200));
+    }
+
+    /* Decorative gold ornament (diamond between two rules) */
+    .ornament {
+        @apply mx-auto flex items-center justify-center gap-2 text-gold-500;
+    }
+    .ornament::before,
+    .ornament::after {
+        content: '';
+        @apply block h-px w-10 bg-gradient-to-r from-transparent to-gold-400;
+    }
+    .ornament::after { @apply bg-gradient-to-l; }
+
+    /* Warm luxe backdrop for dark sections */
+    .lux-dark {
+        background-color: var(--color-maroon-900);
+        background-image:
+            radial-gradient(ellipse at top left, rgba(199, 154, 58, 0.16), transparent 45%),
+            radial-gradient(ellipse at bottom right, rgba(122, 31, 31, 0.55), transparent 50%);
+    }
+
+    /* Thin gold key line used above section titles */
+    .keyline {
+        @apply h-px w-12 bg-gold-400;
     }
 
     .prose-content {

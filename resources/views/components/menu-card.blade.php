@@ -12,18 +12,23 @@
     <div class="relative aspect-[4/3] overflow-hidden bg-cream-100">
         @if($item->image_path)
             <img src="{{ media_url($item->image_path) }}" alt="{{ $item->image_alt ?: $item->name }}"
-                 loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                 loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
         @else
-            <div class="flex h-full w-full items-center justify-center text-maroon-300">
-                <span class="font-display text-lg">{{ $item->name }}</span>
+            <div class="placeholder-food">
+                <svg class="h-10 w-10 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v7a2 2 0 002 2h0a2 2 0 002-2V3M7 12v9M17 3c-1.7 0-3 2-3 5s1 4 3 4v9"/>
+                </svg>
             </div>
         @endif
 
-        <div class="absolute left-3 top-3 flex flex-wrap gap-1">
-            @if($item->is_best_seller)<span class="rounded-full bg-maroon-700 px-2.5 py-1 text-[11px] font-semibold text-cream-50">Best Seller</span>@endif
-            @if($item->is_favorite)<span class="rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold text-charcoal">Favorit</span>@endif
-            @if($item->is_new)<span class="rounded-full bg-green-600 px-2.5 py-1 text-[11px] font-semibold text-white">Baru</span>@endif
-            @if($item->is_spicy)<span class="rounded-full bg-red-600 px-2.5 py-1 text-[11px] font-semibold text-white">Pedas</span>@endif
+        {{-- gradient scrim so badges stay legible over any photo --}}
+        <div class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/25 to-transparent"></div>
+
+        <div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
+            @if($item->is_best_seller)<span class="rounded-full bg-maroon-700/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-cream-50 shadow-sm">Best Seller</span>@endif
+            @if($item->is_favorite)<span class="rounded-full bg-gold-500 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-charcoal shadow-sm">Favorit</span>@endif
+            @if($item->is_new)<span class="rounded-full bg-green-600 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">Baru</span>@endif
+            @if($item->is_spicy)<span class="rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">Pedas</span>@endif
         </div>
     </div>
 

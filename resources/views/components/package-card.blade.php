@@ -14,7 +14,11 @@
             <img src="{{ media_url($package->image_path) }}" alt="{{ $package->image_alt ?: $package->name }}"
                  loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
         @else
-            <div class="flex h-full w-full items-center justify-center font-display text-maroon-300">{{ $package->name }}</div>
+            <div class="placeholder-food">
+                <svg class="h-10 w-10 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 7l1.5 12a2 2 0 002 1.8h5a2 2 0 002-1.8L20 7M9 7V5a3 3 0 016 0v2"/>
+                </svg>
+            </div>
         @endif
         <div class="absolute left-3 top-3 flex gap-1">
             @if($package->is_recommended)<span class="rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold text-charcoal">Rekomendasi</span>@endif
