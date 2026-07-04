@@ -7,8 +7,8 @@
         <a href="{{ route('home') }}" class="flex items-center gap-2">
             @if($siteSettings->logo_path)
                 <img src="{{ media_url($siteSettings->logo_path) }}" alt="{{ $siteSettings->site_name }}"
-                     class="w-auto max-w-[70vw] object-contain"
-                     style="height: {{ $siteSettings->logo_height ?: 48 }}px;">
+                     class="site-logo"
+                     style="--logo-h: {{ $siteSettings->logo_height ?: 56 }}px;">
             @else
                 <span class="font-display text-xl font-bold text-maroon-700 lg:text-2xl">{{ $siteSettings->site_name ?: 'Pondok Tince' }}</span>
             @endif

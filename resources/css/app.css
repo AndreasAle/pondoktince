@@ -33,6 +33,17 @@
 
 [x-cloak] { display: none !important; }
 
+/* Logo header — tinggi diatur dari admin (--logo-h). Di mobile dibatasi agar tidak kegedean. */
+.site-logo {
+    height: var(--logo-h, 56px);
+    width: auto;
+    max-width: 72vw;
+    object-fit: contain;
+}
+@media (max-width: 640px) {
+    .site-logo { height: min(var(--logo-h, 56px), 60px); }
+}
+
 @layer components {
     .container-x {
         @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
