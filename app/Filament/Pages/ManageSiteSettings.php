@@ -49,7 +49,7 @@ class ManageSiteSettings extends Page implements HasForms
                             ->minValue(24)->maxValue(240)->step(2)
                             ->default(56)
                             ->suffix('px')
-                            ->helperText('Perbesar sampai logo terlihat jelas — biasanya 90–150px. Lebar menyesuaikan otomatis; di HP dibatasi agar tidak kegedean.'),
+                            ->helperText('Tinggi logo di header (dibatasi maks 72px agar navbar tetap rapi). Jika logo terlihat kecil, crop ruang kosong pada file logo lalu upload ulang.'),
                         Forms\Components\FileUpload::make('favicon_path')->label('Favicon')->image()->directory('site')->maxSize(1024),
                         Forms\Components\FileUpload::make('default_og_image_path')->label('Default OG image')->image()->directory('site')->maxSize(4096),
                         Forms\Components\Grid::make(2)->schema([

@@ -8,10 +8,10 @@
 
 <div class="container-x py-12">
     @if($categories->count())
-        <div class="mb-8 flex flex-wrap gap-2">
-            <a href="{{ route('articles.index') }}" class="rounded-full px-4 py-2 text-sm font-medium {{ !$categorySlug ? 'bg-maroon-700 text-cream-50' : 'bg-cream-100 text-charcoal/70' }}">Semua</a>
+        <div class="mb-10 flex flex-wrap justify-center gap-2.5">
+            <a href="{{ route('articles.index') }}" class="rounded-full px-5 py-2.5 text-sm font-semibold transition {{ !$categorySlug ? 'bg-maroon-700 text-cream-50 shadow-md shadow-maroon-900/20' : 'bg-white text-charcoal/70 ring-1 ring-cream-200 hover:ring-maroon-300' }}">Semua</a>
             @foreach($categories as $cat)
-                <a href="{{ route('articles.index', ['kategori' => $cat->slug]) }}" class="rounded-full px-4 py-2 text-sm font-medium {{ $categorySlug === $cat->slug ? 'bg-maroon-700 text-cream-50' : 'bg-cream-100 text-charcoal/70' }}">{{ $cat->name }}</a>
+                <a href="{{ route('articles.index', ['kategori' => $cat->slug]) }}" class="rounded-full px-5 py-2.5 text-sm font-semibold transition {{ $categorySlug === $cat->slug ? 'bg-maroon-700 text-cream-50 shadow-md shadow-maroon-900/20' : 'bg-white text-charcoal/70 ring-1 ring-cream-200 hover:ring-maroon-300' }}">{{ $cat->name }}</a>
             @endforeach
         </div>
     @endif

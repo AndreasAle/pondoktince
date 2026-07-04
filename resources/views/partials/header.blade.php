@@ -2,9 +2,9 @@
         @scroll.window="scrolled = window.scrollY > 20"
         class="sticky top-0 z-40 border-b border-cream-200/70 bg-cream-50/90 backdrop-blur transition"
         :class="scrolled && 'shadow-sm'">
-    <div class="container-x flex min-h-16 items-center justify-between gap-4 py-2 lg:min-h-20">
+    <div class="container-x flex h-16 items-center justify-between gap-4 lg:h-20">
         {{-- Logo --}}
-        <a href="{{ route('home') }}" class="flex items-center gap-2">
+        <a href="{{ route('home') }}" class="flex items-center gap-2 py-1.5">
             @if($siteSettings->logo_path)
                 <img src="{{ media_url($siteSettings->logo_path) }}" alt="{{ $siteSettings->site_name }}"
                      class="site-logo"

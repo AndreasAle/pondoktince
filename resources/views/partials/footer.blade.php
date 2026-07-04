@@ -55,15 +55,15 @@
             <h3 class="mb-4 font-display text-lg font-semibold text-cream-50">Hubungi Kami</h3>
             <ul class="space-y-3 text-sm text-cream-100/75">
                 @if($siteSettings->address)
-                    <li class="flex gap-2"><span class="text-gold-400">📍</span><span>{{ $siteSettings->address }}</span></li>
+                    <li class="flex gap-2.5"><x-ico name="pin" class="mt-0.5 h-4 w-4 flex-none text-gold-400" /><span>{{ $siteSettings->address }}</span></li>
                 @endif
                 @if($siteSettings->whatsapp_number)
-                    <li class="flex gap-2"><span class="text-gold-400">💬</span>
+                    <li class="flex gap-2.5"><x-ico name="chat" class="mt-0.5 h-4 w-4 flex-none text-gold-400" />
                         <a href="{{ wa_url('Halo '.$siteSettings->site_name.', saya ingin bertanya.') }}" target="_blank" rel="noopener nofollow" class="hover:text-gold-300">{{ $siteSettings->whatsapp_number }}</a>
                     </li>
                 @endif
                 @if($siteSettings->email)
-                    <li class="flex gap-2"><span class="text-gold-400">✉️</span><a href="mailto:{{ $siteSettings->email }}" class="hover:text-gold-300">{{ $siteSettings->email }}</a></li>
+                    <li class="flex gap-2.5"><x-ico name="mail" class="mt-0.5 h-4 w-4 flex-none text-gold-400" /><a href="mailto:{{ $siteSettings->email }}" class="hover:text-gold-300">{{ $siteSettings->email }}</a></li>
                 @endif
                 @if(is_array($siteSettings->opening_hours) && count($siteSettings->opening_hours))
                     <li class="pt-1">

@@ -33,15 +33,15 @@
 
 [x-cloak] { display: none !important; }
 
-/* Logo header — tinggi diatur dari admin (--logo-h). Di mobile dibatasi agar tidak kegedean. */
+/* Logo header — tinggi diatur dari admin (--logo-h) tapi dibatasi agar navbar tetap rapi. */
 .site-logo {
-    height: var(--logo-h, 56px);
+    height: min(var(--logo-h, 56px), 72px);
     width: auto;
-    max-width: 72vw;
+    max-width: 60vw;
     object-fit: contain;
 }
 @media (max-width: 640px) {
-    .site-logo { height: min(var(--logo-h, 56px), 60px); }
+    .site-logo { height: min(var(--logo-h, 56px), 46px); }
 }
 
 @layer components {
