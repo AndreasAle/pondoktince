@@ -58,12 +58,15 @@ Route::post('/track/whatsapp-click', [TrackingController::class, 'whatsappClick'
 
 /*
 |--------------------------------------------------------------------------
-| SEO pillar pages (fixed set)
+| SEO pillar pages (fixed set) — literal routes so they never collide with
+| the {slug} catch-all below (two identical {slug} routes overwrite each other).
 |--------------------------------------------------------------------------
 */
-Route::get('/{slug}', [PageController::class, 'pillar'])
-    ->whereIn('slug', ['kuliner-palembang', 'pempek-palembang', 'makanan-enak-palembang'])
-    ->name('pillar');
+foreach (['kuliner-palembang', 'pempek-palembang', 'makanan-enak-palembang'] as $pillarSlug) {
+    Route::get('/'.$pillarSlug, [PageController::class, 'pillar'])
+        ->defaults('slug', $pillarSlug)
+        ->name('pillar.'.$pillarSlug);
+}
 
 /*
 |--------------------------------------------------------------------------

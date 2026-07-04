@@ -76,47 +76,55 @@ class PageController extends Controller
      */
     public function pillar(string $slug, SchemaService $schema)
     {
-        $config = [
-            'kuliner-palembang' => [
-                'title' => 'Kuliner Palembang di Pondok Tince',
-                'description' => 'Kuliner Palembang yang nyaman untuk keluarga dan tamu luar kota. Nikmati masakan khas Palembang di Pondok Tince.',
-                'keywords' => 'kuliner Palembang, kuliner khas Palembang',
-            ],
-            'pempek-palembang' => [
-                'title' => 'Pempek Palembang di Pempek Tince',
-                'description' => 'Pempek Palembang khas untuk makan di tempat, oleh-oleh, dan frozen. Pesan pempek Tince via WhatsApp.',
-                'keywords' => 'pempek Palembang, pempek Palembang enak',
-            ],
-            'makanan-enak-palembang' => [
-                'title' => 'Makanan Enak di Palembang untuk Keluarga dan Rombongan',
-                'description' => 'Rekomendasi makanan enak khas Palembang di Pondok Tince. Cocok untuk keluarga, rombongan, dan tamu luar kota.',
-                'keywords' => 'makanan enak Palembang, makanan khas Palembang',
-            ],
-        ][$slug] ?? null;
+        $content = \App\Support\PillarContent::for($slug);
 
-        abort_if($config === null, 404);
+        abort_if($content === null, 404);
 
         $page = $this->cmsPage($slug);
 
-        $this->applySeo($page, $config, $this->crumbs([
-            ['name' => $config['title'], 'url' => route('pillar', $slug)],
+        // SEO fallbacks come from the rich content definition.
+        $this->applySeo($page, [
+            'title' => $content['meta_title'] ?? $content['title'],
+            'description' => $content['meta_description'] ?? null,
+            'keywords' => $content['keyword'] ?? null,
+        ], $this->crumbs([
+            ['name' => $content['title'], 'url' => url('/'.$slug)],
         ]));
 
+        // Prefer the hand-optimised pillar meta over the page's auto-generated title,
+        // unless the admin deliberately set a custom meta on the CMS page.
+        if (! $page || blank($page->meta_title)) {
+            seo()->title($content['meta_title']);
+        }
+        if (! $page || blank($page->meta_description)) {
+            seo()->description($content['meta_description']);
+        }
+
+        // Structured data: LocalBusiness + FAQ (rich results in Google).
         seo()->addSchema($schema->restaurant());
+        if (! empty($content['faqs'])) {
+            $faqObjects = collect($content['faqs'])->map(fn ($f) => (object) ['question' => $f['q'], 'answer' => $f['a']]);
+            seo()->addSchema($schema->faqPage($faqObjects));
+        }
+
+        $brandKey = $content['brand'] === 'pempek-tince' ? Brand::KEY_PEMPEK : Brand::KEY_PONDOK;
 
         $favorites = MenuItem::query()->available()
-            ->forBrandKey($slug === 'pempek-palembang' ? Brand::KEY_PEMPEK : Brand::KEY_PONDOK)
+            ->forBrandKey($brandKey)
             ->with('brand')->ordered()->limit(6)->get();
 
         if ($favorites->isEmpty()) {
             $favorites = MenuItem::query()->available()->with('brand')->ordered()->limit(6)->get();
         }
 
+        $testimonials = \App\Models\Testimonial::active()->ordered()->limit(3)->get();
+
         return view('pages.pillar', [
             'page' => $page,
             'slug' => $slug,
-            'config' => $config,
+            'content' => $content,
             'favorites' => $favorites,
+            'testimonials' => $testimonials,
         ]);
     }
 
