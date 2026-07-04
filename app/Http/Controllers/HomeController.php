@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Gallery;
+use App\Models\HeroSlide;
 use App\Models\MenuItem;
 use App\Models\Testimonial;
 use App\Services\SchemaService;
@@ -37,7 +38,8 @@ class HomeController extends Controller
 
         $gallery = Gallery::active()->ordered()->limit(8)->get();
         $testimonials = Testimonial::active()->ordered()->limit(6)->get();
+        $heroSlides = HeroSlide::active()->ordered()->get();
 
-        return view('pages.home', compact('page', 'brands', 'favorites', 'gallery', 'testimonials'));
+        return view('pages.home', compact('page', 'brands', 'favorites', 'gallery', 'testimonials', 'heroSlides'));
     }
 }

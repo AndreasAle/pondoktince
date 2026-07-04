@@ -11,42 +11,104 @@
     $jam = is_array($s->opening_hours) && count($s->opening_hours) ? ($s->opening_hours[0]['hours'] ?? 'Setiap hari') : 'Setiap hari';
 @endphp
 
-{{-- ================= HERO ================= --}}
-<section class="relative overflow-hidden {{ $heroImg ? 'bg-maroon-900' : 'lux-dark' }} text-cream-50">
-    @if($heroImg)
-        <img src="{{ $heroImg }}" alt="{{ $heroTitle }}" class="absolute inset-0 h-full w-full object-cover opacity-35">
-        <div class="absolute inset-0 bg-gradient-to-br from-maroon-900 via-maroon-900/85 to-maroon-800/60"></div>
-    @endif
+{{-- ================= HERO CAROUSEL ================= --}}
+@if($heroSlides->count())
+<section
+    x-data="{
+        active: 0,
+        count: {{ $heroSlides->count() }},
+        timer: null,
+        start() { if (this.count > 1) this.timer = setInterval(() => this.next(), 6500); },
+        stop() { clearInterval(this.timer); },
+        next() { this.active = (this.active + 1) % this.count; },
+        prev() { this.active = (this.active - 1 + this.count) % this.count; },
+        go(i) { this.active = i; },
+    }"
+    x-init="start()"
+    @mouseenter="stop()" @mouseleave="start()"
+    class="relative overflow-hidden lux-dark text-cream-50">
 
     {{-- soft gold glow accents --}}
-    <div class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl"></div>
-    <div class="pointer-events-none absolute -bottom-24 left-1/4 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute -right-24 -top-24 z-20 h-72 w-72 rounded-full bg-gold-500/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-24 left-1/4 z-20 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl"></div>
 
-    <div class="container-x relative py-20 sm:py-24 lg:py-32">
-        <div class="mx-auto max-w-3xl text-center">
-            <div class="ornament mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold-300">
-                Selamat Datang di Pondok Tince
+    <div class="grid">
+        @foreach($heroSlides as $i => $slide)
+            @php $img = media_url($slide->image_path); @endphp
+            <div class="relative col-start-1 row-start-1 transition-opacity duration-1000 ease-out"
+                 :class="active === {{ $i }} ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'">
+
+                @if($img)
+                    <img src="{{ $img }}" alt="{{ $slide->image_alt ?: $slide->title }}"
+                         class="absolute inset-0 h-full w-full object-cover transition-transform ease-out"
+                         style="transition-duration: 8000ms;"
+                         :class="active === {{ $i }} ? 'scale-110' : 'scale-100'">
+                @endif
+
+                {{-- overlay merah premium (selalu ada agar tetap bernuansa merah & teks terbaca) --}}
+                <div class="absolute inset-0 bg-gradient-to-br from-maroon-900/95 via-maroon-900/80 to-maroon-800/55"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-maroon-900/70 via-transparent to-transparent"></div>
+
+                <div class="relative container-x py-24 sm:py-28 lg:py-36">
+                    <div class="mx-auto max-w-3xl text-center">
+                        @if($slide->eyebrow)
+                            <div class="ornament mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-gold-300">{{ $slide->eyebrow }}</div>
+                        @endif
+                        <h1 class="h-display text-4xl leading-[1.1] text-cream-50 sm:text-5xl lg:text-6xl">{{ $slide->title }}</h1>
+                        @if($slide->subtitle)
+                            <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-cream-100/85 sm:text-lg">{{ $slide->subtitle }}</p>
+                        @endif
+                        <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+                            @if($slide->primary_label && $slide->primary_url)
+                                <a href="{{ $slide->primary_url }}" class="btn-gold w-full sm:w-auto">{{ $slide->primary_label }}</a>
+                            @endif
+                            @if($slide->show_whatsapp)
+                                <x-wa-button :message="$slide->whatsapp_message ?: ('Halo '.$siteSettings->site_name.', saya ingin bertanya.')" label="Booking via WhatsApp" source="home-hero" class="w-full sm:w-auto" />
+                            @endif
+                            @if($slide->secondary_label && $slide->secondary_url)
+                                <a href="{{ $slide->secondary_url }}" class="btn-outline w-full !border-cream-100/25 !bg-white/5 !text-cream-50 hover:!bg-white/15 sm:w-auto">{{ $slide->secondary_label }}</a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h1 class="h-display text-4xl leading-[1.1] text-cream-50 sm:text-5xl lg:text-6xl">{{ $heroTitle }}</h1>
-            <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-cream-100/85 sm:text-lg">{{ $heroSub }}</p>
+        @endforeach
+    </div>
 
-            <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+    @if($heroSlides->count() > 1)
+        {{-- arrows --}}
+        <button @click="prev()" aria-label="Slide sebelumnya"
+                class="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-cream-100/20 bg-black/25 p-2.5 backdrop-blur transition hover:bg-black/45 sm:left-5">
+            <svg class="h-5 w-5 text-cream-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button @click="next()" aria-label="Slide berikutnya"
+                class="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-cream-100/20 bg-black/25 p-2.5 backdrop-blur transition hover:bg-black/45 sm:right-5">
+            <svg class="h-5 w-5 text-cream-50" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+
+        {{-- dots --}}
+        <div class="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+            @foreach($heroSlides as $i => $slide)
+                <button @click="go({{ $i }})" aria-label="Ke slide {{ $i + 1 }}"
+                        class="h-2 rounded-full transition-all duration-300"
+                        :class="active === {{ $i }} ? 'w-7 bg-gold-400' : 'w-2 bg-cream-100/40 hover:bg-cream-100/70'"></button>
+            @endforeach
+        </div>
+    @endif
+</section>
+@else
+    {{-- Fallback bila belum ada slide (semua dihapus dari admin) --}}
+    <section class="relative overflow-hidden lux-dark py-24 text-center text-cream-50 sm:py-28">
+        <div class="container-x mx-auto max-w-3xl">
+            <h1 class="h-display text-4xl text-cream-50 sm:text-5xl lg:text-6xl">{{ $heroTitle }}</h1>
+            <p class="mx-auto mt-6 max-w-xl text-cream-100/85">{{ $heroSub }}</p>
+            <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <a href="{{ route('menu') }}" class="btn-gold w-full sm:w-auto">Lihat Menu Kami</a>
                 <x-wa-button :message="'Halo '.$s->site_name.', saya ingin booking tempat.'" label="Booking via WhatsApp" source="home-hero" class="w-full sm:w-auto" />
-                <a href="{{ route('pempek.index') }}" class="btn-outline w-full !border-cream-100/25 !bg-white/5 !text-cream-50 hover:!bg-white/15 sm:w-auto">Pesan Pempek Tince</a>
-            </div>
-
-            {{-- trust line --}}
-            <div class="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-cream-100/70 sm:text-sm">
-                <span class="flex items-center gap-1.5"><span class="text-gold-400">✦</span> Masakan Khas Palembang</span>
-                <span class="hidden h-3 w-px bg-cream-100/20 sm:block"></span>
-                <span class="flex items-center gap-1.5"><span class="text-gold-400">✦</span> Nyaman untuk Keluarga</span>
-                <span class="hidden h-3 w-px bg-cream-100/20 sm:block"></span>
-                <span class="flex items-center gap-1.5"><span class="text-gold-400">✦</span> Booking &amp; Oleh-oleh</span>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+@endif
 
 {{-- ================= QUICK INFO BAR ================= --}}
 <section class="border-b border-cream-200 bg-cream-100">
