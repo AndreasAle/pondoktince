@@ -59,6 +59,39 @@ if (! function_exists('media_url')) {
     }
 }
 
+if (! function_exists('youtube_id')) {
+    /**
+     * Extract a YouTube video id from any common URL form (or null).
+     */
+    function youtube_id(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        if (preg_match('%(?:youtube\.com/(?:watch\?v=|embed/|shorts/|v/)|youtu\.be/)([\w-]{11})%i', $url, $m)) {
+            return $m[1];
+        }
+
+        return null;
+    }
+}
+
+if (! function_exists('vimeo_id')) {
+    function vimeo_id(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        if (preg_match('%vimeo\.com/(?:video/)?(\d+)%i', $url, $m)) {
+            return $m[1];
+        }
+
+        return null;
+    }
+}
+
 if (! function_exists('rupiah')) {
     function rupiah(int|float|string|null $value, string $fallback = 'Menyesuaikan'): string
     {

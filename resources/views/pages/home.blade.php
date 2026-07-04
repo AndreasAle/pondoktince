@@ -212,6 +212,9 @@
     </div>
 </section>
 
+{{-- ================= VIDEO PROFIL (full-width, dikelola dari admin) ================= --}}
+@include('partials.video-profile')
+
 {{-- ================= MENU FAVORIT ================= --}}
 @if($favorites->count())
 <section class="bg-cream-100 py-16 lg:py-24">

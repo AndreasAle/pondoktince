@@ -77,6 +77,39 @@ class ManageSiteSettings extends Page implements HasForms
                             ->columns(2)->defaultItems(0)->addActionLabel('Tambah baris jam'),
                     ]),
 
+                    Forms\Components\Tabs\Tab::make('Video Profil')->schema([
+                        Forms\Components\Toggle::make('profile_video_enabled')
+                            ->label('Tampilkan section video profil')->default(true),
+
+                        Forms\Components\Placeholder::make('video_hint')
+                            ->label('')
+                            ->content('Isi SALAH SATU: upload file video, ATAU tempel link YouTube/Vimeo. Untuk video besar, disarankan pakai YouTube agar ringan & tidak kena limit upload server.'),
+
+                        Forms\Components\FileUpload::make('profile_video_path')
+                            ->label('Upload video (MP4/WebM)')
+                            ->directory('videos')
+                            ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                            ->maxSize(51200) // 50 MB — sesuaikan dengan limit PHP server
+                            ->helperText('Maks ±50MB. Jika gagal upload, gunakan link YouTube di bawah.'),
+
+                        Forms\Components\TextInput::make('profile_video_url')
+                            ->label('Atau link video (YouTube / Vimeo / URL .mp4)')
+                            ->placeholder('https://www.youtube.com/watch?v=...')
+                            ->url(),
+
+                        Forms\Components\FileUpload::make('profile_video_poster')
+                            ->label('Gambar poster (thumbnail sebelum diputar)')
+                            ->image()->imageEditor()->directory('videos/poster')->maxSize(4096),
+
+                        Forms\Components\Toggle::make('profile_video_autoplay')
+                            ->label('Putar otomatis sebagai background (tanpa suara, berulang)')
+                            ->helperText('Hanya untuk file MP4 yang diupload. Jika mati, video tampil dengan tombol putar.'),
+
+                        Forms\Components\TextInput::make('profile_video_eyebrow')->label('Teks kecil (di atas judul)')->placeholder('Tentang Kami'),
+                        Forms\Components\TextInput::make('profile_video_title')->label('Judul')->placeholder('Cerita di Balik Pondok Tince'),
+                        Forms\Components\Textarea::make('profile_video_subtitle')->label('Subjudul')->rows(2),
+                    ]),
+
                     Forms\Components\Tabs\Tab::make('Sosial Media')->schema([
                         Forms\Components\TextInput::make('instagram_pondok')->label('Instagram Pondok Tince')->url(),
                         Forms\Components\TextInput::make('instagram_pempek')->label('Instagram Pempek Tince')->url(),

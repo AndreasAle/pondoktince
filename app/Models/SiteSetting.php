@@ -12,6 +12,8 @@ class SiteSetting extends Model
     protected $casts = [
         'opening_hours' => 'array',
         'logo_height' => 'integer',
+        'profile_video_enabled' => 'boolean',
+        'profile_video_autoplay' => 'boolean',
     ];
 
     /**
