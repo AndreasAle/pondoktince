@@ -111,24 +111,46 @@
 @endif
 
 {{-- ================= QUICK INFO BAR ================= --}}
-<section class="border-b border-cream-200 bg-cream-100">
-    <div class="container-x grid grid-cols-2 divide-cream-200 py-6 text-sm sm:divide-x lg:grid-cols-4">
-        @foreach([
-            ['🕑','Jam Buka', $jam],
-            ['📍','Lokasi', 'Palembang'],
-            ['💬','WhatsApp', 'Chat admin'],
-            ['🍽️','Layanan', 'Dine-in · Take away'],
-        ] as $i => $info)
-            <div class="flex items-center gap-3 px-2 py-2 {{ $i % 2 === 0 ? 'sm:pl-0' : '' }} lg:justify-center">
-                <span class="text-2xl">{{ $info[0] }}</span>
-                <div>
-                    <span class="block text-xs uppercase tracking-wide text-charcoal/45">{{ $info[1] }}</span>
-                    @if($info[1] === 'Lokasi')
-                        <a href="{{ route('lokasi') }}" class="font-semibold text-charcoal hover:text-maroon-700">{{ $info[2] }}</a>
-                    @elseif($info[1] === 'WhatsApp')
-                        <a href="{{ wa_url('Halo '.$s->site_name.', saya ingin bertanya.') }}" target="_blank" rel="nofollow" class="font-semibold text-charcoal hover:text-maroon-700">{{ $info[2] }}</a>
+<section class="relative border-y border-cream-200 bg-gradient-to-b from-cream-100 to-cream-50">
+    {{-- thin gold accent line on top --}}
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent"></div>
+
+    <div class="container-x grid grid-cols-2 gap-y-6 py-8 lg:grid-cols-4 lg:gap-y-0 lg:py-9">
+        @php
+            $infoItems = [
+                ['clock', 'Jam Buka', $jam, null],
+                ['pin', 'Lokasi', 'Palembang', route('lokasi')],
+                ['chat', 'WhatsApp', 'Chat admin', wa_url('Halo '.$s->site_name.', saya ingin bertanya.')],
+                ['utensils', 'Layanan', 'Dine-in · Take away', null],
+            ];
+        @endphp
+
+        @foreach($infoItems as $i => $info)
+            <div class="group flex items-center gap-3.5 px-1 sm:gap-4 sm:px-4 lg:justify-center {{ $i > 0 ? 'lg:border-l lg:border-cream-200' : '' }}">
+                {{-- premium icon badge --}}
+                <span class="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-gradient-to-br from-maroon-700 to-maroon-900 text-gold-300 shadow-[0_6px_16px_-8px_rgba(74,22,21,0.6)] ring-1 ring-inset ring-gold-400/25 transition duration-300 group-hover:from-maroon-600 group-hover:to-maroon-800">
+                    @switch($info[0])
+                        @case('clock')
+                            <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.25"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5V12l3 1.75"/></svg>
+                            @break
+                        @case('pin')
+                            <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21c4-4.5 6-7.9 6-11a6 6 0 10-12 0c0 3.1 2 6.5 6 11z"/><circle cx="12" cy="10" r="2.25"/></svg>
+                            @break
+                        @case('chat')
+                            <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 1113.6 4.35L19.5 20l-3.75-1.3A7.5 7.5 0 014.5 12z"/><path stroke-linecap="round" d="M9 11h6M9 14h4"/></svg>
+                            @break
+                        @default
+                            <svg class="h-[22px] w-[22px]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v6a2 2 0 002 2 2 2 0 002-2V3M7 11v10M17 3c-1.6 0-2.8 2-2.8 4.8 0 2.5 1 3.7 2.8 3.9V21"/></svg>
+                    @endswitch
+                </span>
+
+                <div class="min-w-0">
+                    <span class="block text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-600">{{ $info[1] }}</span>
+                    @if($info[3])
+                        <a href="{{ $info[3] }}" @if($info[0] === 'chat') target="_blank" rel="nofollow" @endif
+                           class="font-display text-[15px] font-semibold text-charcoal transition group-hover:text-maroon-700">{{ $info[2] }}</a>
                     @else
-                        <span class="font-semibold text-charcoal">{{ $info[2] }}</span>
+                        <span class="font-display text-[15px] font-semibold text-charcoal">{{ $info[2] }}</span>
                     @endif
                 </div>
             </div>
