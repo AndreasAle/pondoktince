@@ -7,9 +7,10 @@
 @endphp
 
 <a href="{{ route('product.menu', $item->slug) }}" class="card group flex flex-col overflow-hidden">
+    @php $cardImg = $item->primaryImage(); @endphp
     <div class="relative aspect-square overflow-hidden bg-cream-100">
-        @if($item->image_path)
-            <img src="{{ media_url($item->image_path) }}" alt="{{ $item->image_alt ?: $item->name }}"
+        @if($cardImg)
+            <img src="{{ media_url($cardImg) }}" alt="{{ $item->image_alt ?: $item->name }}"
                  loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
         @else
             <div class="placeholder-food"><x-ico name="utensils" class="h-10 w-10 opacity-70" /></div>

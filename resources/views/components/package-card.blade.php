@@ -7,9 +7,10 @@
 @endphp
 
 <a href="{{ route('product.package', $package->slug) }}" class="card group flex flex-col overflow-hidden {{ $package->is_recommended ? 'ring-1 ring-gold-300' : '' }}">
+    @php $cardImg = $package->primaryImage(); @endphp
     <div class="relative aspect-square overflow-hidden bg-cream-100">
-        @if($package->image_path)
-            <img src="{{ media_url($package->image_path) }}" alt="{{ $package->image_alt ?: $package->name }}"
+        @if($cardImg)
+            <img src="{{ media_url($cardImg) }}" alt="{{ $package->image_alt ?: $package->name }}"
                  loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
         @else
             <div class="placeholder-food">

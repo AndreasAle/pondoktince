@@ -49,6 +49,21 @@ trait HasProductReviews
         return $out;
     }
 
+    /**
+     * Foto utama untuk kartu/thumbnail: pakai image_path, jika kosong ambil
+     * foto pertama dari galeri (biar tetap tampil walau admin upload di galeri).
+     */
+    public function primaryImage(): ?string
+    {
+        if ($this->image_path) {
+            return $this->image_path;
+        }
+
+        $gallery = $this->gallery;
+
+        return is_array($gallery) && count($gallery) ? ($gallery[0] ?? null) : null;
+    }
+
     public function discountPercent(): ?int
     {
         if ($this->discount_price && $this->price && $this->discount_price < $this->price) {
