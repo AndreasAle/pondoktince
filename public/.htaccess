@@ -1,3 +1,12 @@
+# --- LiteSpeed (Hostinger): jangan cache HTML dinamis milik CMS ---
+# Konten dari admin (foto, harga, menu) harus selalu tampil terbaru.
+# Aset statis (CSS/JS/gambar) tetap di-cache browser lewat header-nya sendiri.
+<IfModule LiteSpeed>
+    CacheDisable public /
+    RewriteEngine On
+    RewriteRule .* - [E=Cache-Control:no-cache]
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
