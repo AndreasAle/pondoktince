@@ -16,12 +16,16 @@ class SchemaService
     {
         $settings = SiteSetting::current();
 
-        return [
+        return array_filter([
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
+            '@id' => url('/').'#website',
             'name' => $settings->site_name ?: 'Pondok Tince',
+            'alternateName' => 'Pempek Tince',
             'url' => url('/'),
-        ];
+            'inLanguage' => 'id-ID',
+            'publisher' => ['@id' => url('/').'#organization'],
+        ]);
     }
 
     public function organization(): array
@@ -33,12 +37,36 @@ class SchemaService
             $settings->instagram_pempek,
         ]));
 
+        $phone = $settings->whatsapp_number ? '+'.preg_replace('/\D/', '', $settings->whatsapp_number) : null;
+
         return array_filter([
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
+            '@id' => url('/').'#organization',
             'name' => $settings->site_name ?: 'Pondok Tince',
+            'alternateName' => 'Pempek Tince',
+            'description' => $settings->default_seo_description ?: 'Kuliner khas Palembang: rumah makan Pondok Tince & pempek Pempek Tince.',
             'url' => url('/'),
-            'logo' => $settings->logo_path ? asset('storage/'.$settings->logo_path) : null,
+            'logo' => $settings->logo_path ? [
+                '@type' => 'ImageObject',
+                'url' => asset('storage/'.$settings->logo_path),
+            ] : null,
+            'image' => $settings->default_og_image_path ? asset('storage/'.$settings->default_og_image_path) : null,
+            'email' => $settings->email ?: null,
+            'address' => $settings->address ? [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $settings->address,
+                'addressLocality' => 'Palembang',
+                'addressRegion' => 'Sumatera Selatan',
+                'addressCountry' => 'ID',
+            ] : null,
+            'contactPoint' => $phone ? [
+                '@type' => 'ContactPoint',
+                'telephone' => $phone,
+                'contactType' => 'customer service',
+                'areaServed' => 'ID',
+                'availableLanguage' => ['Indonesian'],
+            ] : null,
             'sameAs' => $sameAs ?: null,
         ]);
     }
