@@ -14,6 +14,8 @@ class Page extends Model
 
     protected $casts = [
         'custom_schema' => 'array',
+        'features' => 'array',
+        'steps' => 'array',
         'noindex' => 'boolean',
         'nofollow' => 'boolean',
         'in_sitemap' => 'boolean',

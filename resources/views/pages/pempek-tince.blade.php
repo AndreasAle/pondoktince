@@ -1,6 +1,24 @@
 @extends('layouts.public')
 
 @section('content')
+@php
+    // Konten editable dari admin (Halaman > Pempek Tince > tab "Keunggulan & Langkah"),
+    // dengan fallback default agar tetap tampil rapi bila belum diisi.
+    $features = (is_array($page?->features) && count($page->features)) ? $page->features : [
+        ['icon' => 'fish', 'title' => 'Ikan Berkualitas'],
+        ['icon' => 'fire', 'title' => 'Rasa Khas Palembang'],
+        ['icon' => 'gift', 'title' => 'Cocok untuk Oleh-Oleh'],
+        ['icon' => 'chat', 'title' => 'Bisa Pesan Online'],
+        ['icon' => 'snowflake', 'title' => 'Tersedia Frozen'],
+    ];
+    $steps = (is_array($page?->steps) && count($page->steps)) ? $page->steps : [
+        ['title' => 'Pilih menu / paket'],
+        ['title' => 'Klik WhatsApp'],
+        ['title' => 'Konfirmasi stok & pengiriman'],
+        ['title' => 'Pembayaran'],
+        ['title' => 'Pesanan diproses'],
+    ];
+@endphp
 <x-page-hero eyebrow="Pempek Tince Palembang"
     :title="$page?->hero_title ?: 'Pempek Tince Palembang untuk Oleh-Oleh, Frozen, dan Pesanan Online'"
     :subtitle="$page?->hero_subtitle ?: 'Pempek khas Palembang untuk oleh-oleh, frozen, dan pesanan keluarga. Pesan online, bisa kirim luar kota.'"
@@ -37,21 +55,15 @@
     </div>
 </section>
 
-{{-- Keunggulan --}}
-<section class="bg-cream-100 py-16 lg:py-20">
+{{-- Keunggulan (editable dari admin) --}}
+<section class="bg-cream-100 py-16 lg:py-24">
     <div class="container-x">
         <x-section-heading eyebrow="Keunggulan" title="Kenapa Pempek Tince" center />
-        <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            @foreach([
-                ['fish','Ikan Berkualitas'],
-                ['fire','Rasa Khas Palembang'],
-                ['gift','Cocok untuk Oleh-Oleh'],
-                ['chat','Bisa Pesan Online'],
-                ['snowflake','Tersedia Frozen'],
-            ] as $k)
-                <div class="card flex flex-col items-center gap-3 p-6 text-center">
-                    <x-icon-badge :name="$k[0]" />
-                    <span class="text-sm font-semibold text-charcoal/80">{{ $k[1] }}</span>
+        <div class="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5">
+            @foreach($features as $k)
+                <div class="group flex flex-col items-center gap-4 rounded-2xl border border-cream-200/80 bg-white p-6 text-center transition duration-300 hover:-translate-y-1 hover:border-gold-300 hover:shadow-[0_20px_40px_-22px_rgba(74,22,21,0.4)]">
+                    <x-icon-badge :name="$k['icon'] ?? 'star'" size="lg" />
+                    <span class="text-sm font-semibold leading-snug text-charcoal/80">{{ $k['title'] ?? '' }}</span>
                 </div>
             @endforeach
         </div>
@@ -83,18 +95,22 @@
 </section>
 @endif
 
-{{-- Cara order --}}
-<section class="container-x py-16 lg:py-20">
-    <x-section-heading eyebrow="Cara Order" title="Mudah Pesan dalam 5 Langkah" center />
-    <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        @foreach([['Pilih menu / paket'],['Klik WhatsApp'],['Konfirmasi stok & pengiriman'],['Pembayaran'],['Pesanan diproses']] as $n => $step)
-            <div class="relative rounded-2xl border border-cream-200 bg-white p-6 text-center shadow-sm">
-                <span class="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-maroon-700 to-maroon-900 font-display text-lg font-bold text-gold-300 ring-1 ring-inset ring-gold-400/25">{{ $n + 1 }}</span>
-                <p class="mt-3 text-sm font-medium text-charcoal/80">{{ $step[0] }}</p>
-            </div>
-        @endforeach
+{{-- Cara order (editable dari admin) --}}
+<section class="container-x py-16 lg:py-24">
+    <x-section-heading eyebrow="Cara Order" :title="'Mudah Pesan dalam '.count($steps).' Langkah'" center />
+    <div class="relative mt-12">
+        {{-- garis penghubung (desktop) --}}
+        <div class="pointer-events-none absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-gold-300/60 to-transparent lg:block"></div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
+            @foreach($steps as $n => $step)
+                <div class="relative flex flex-col items-center text-center">
+                    <span class="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-maroon-700 to-maroon-900 font-display text-lg font-bold text-gold-300 ring-4 ring-cream-50">{{ $n + 1 }}</span>
+                    <p class="mt-3 max-w-[10rem] text-sm font-medium text-charcoal/80">{{ is_array($step) ? ($step['title'] ?? '') : $step }}</p>
+                </div>
+            @endforeach
+        </div>
     </div>
-    <div class="mt-9 text-center">
+    <div class="mt-12 text-center">
         <x-wa-button message="Halo Pempek Tince, saya ingin pesan pempek." brand="pempek-tince" label="Pesan Pempek Sekarang" source="pempek-cara" variant="gold" />
     </div>
 </section>

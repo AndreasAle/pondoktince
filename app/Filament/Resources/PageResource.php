@@ -57,6 +57,31 @@ class PageResource extends Resource
                         ->helperText('Isi hanya bila halaman ini di-bind ke template Blade khusus (mis. home, pempek_tince).'),
                 ]),
 
+                Forms\Components\Tabs\Tab::make('Keunggulan & Langkah')->schema([
+                    Forms\Components\Placeholder::make('fs_hint')->label('')
+                        ->content('Dipakai pada halaman landing seperti Pempek Tince — untuk bagian "Keunggulan" dan "Cara Order".'),
+                    Forms\Components\Repeater::make('features')
+                        ->label('Keunggulan (kartu ikon)')
+                        ->schema([
+                            Forms\Components\Select::make('icon')->label('Ikon')->options([
+                                'fish' => 'Ikan', 'fire' => 'Api / Pedas', 'gift' => 'Hadiah / Oleh-oleh',
+                                'chat' => 'Chat', 'snowflake' => 'Frozen', 'star' => 'Bintang',
+                                'truck' => 'Kirim', 'heart' => 'Hati', 'check-circle' => 'Centang',
+                                'utensils' => 'Sendok-Garpu', 'sparkle' => 'Sparkle',
+                            ])->default('star')->required(),
+                            Forms\Components\TextInput::make('title')->label('Judul')->required(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->addActionLabel('Tambah keunggulan')
+                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
+                    Forms\Components\Repeater::make('steps')
+                        ->label('Cara Order (langkah)')
+                        ->schema([
+                            Forms\Components\TextInput::make('title')->label('Langkah')->required(),
+                        ])
+                        ->reorderable()->addActionLabel('Tambah langkah')
+                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? null),
+                ]),
+
                 Forms\Components\Tabs\Tab::make('Hero')->schema([
                     Forms\Components\TextInput::make('hero_title')->label('Judul hero'),
                     Forms\Components\Textarea::make('hero_subtitle')->label('Subjudul hero')->rows(2),
