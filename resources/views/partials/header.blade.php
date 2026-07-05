@@ -30,7 +30,7 @@
 
         <div class="hidden items-center gap-3 lg:flex">
             <a href="{{ route('booking.create') }}" class="btn-outline !px-5 !py-2.5 text-xs">Booking</a>
-            <x-wa-button :message="'Halo '.$siteSettings->site_name.', saya ingin bertanya.'" label="WhatsApp" source="header" class="!px-5 !py-2.5 text-xs" />
+            <x-social-menu />
         </div>
 
         {{-- Mobile toggle --}}
@@ -58,6 +58,21 @@
             <div class="mt-3 flex flex-col gap-2">
                 <a href="{{ route('booking.create') }}" class="btn-primary w-full">Booking Tempat</a>
                 <x-wa-button :message="'Halo '.$siteSettings->site_name.', saya ingin bertanya.'" label="Chat WhatsApp" source="mobile-menu" class="w-full" />
+            </div>
+
+            {{-- Sosmed (mobile) --}}
+            <div class="mt-4 rounded-xl border border-cream-200 bg-cream-50 p-3">
+                <p class="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-600">Terhubung dengan Kami</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    @if($siteSettings->instagram_pondok)
+                        <a href="{{ $siteSettings->instagram_pondok }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-medium text-charcoal/80 ring-1 ring-cream-200"><x-ico name="instagram" class="h-4 w-4 text-maroon-700" /> IG Pondok</a>
+                    @endif
+                    @if($siteSettings->instagram_pempek)
+                        <a href="{{ $siteSettings->instagram_pempek }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-medium text-charcoal/80 ring-1 ring-cream-200"><x-ico name="instagram" class="h-4 w-4 text-maroon-700" /> IG Pempek</a>
+                    @endif
+                    <a href="{{ wa_url('Halo Pondok Tince, saya ingin bertanya.', 'pondok-tince') }}" target="_blank" rel="noopener nofollow" class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-medium text-charcoal/80 ring-1 ring-cream-200"><x-ico name="chat" class="h-4 w-4 text-[#25D366]" /> WA Pondok</a>
+                    <a href="{{ wa_url('Halo Pempek Tince, saya ingin pesan pempek.', 'pempek-tince') }}" target="_blank" rel="noopener nofollow" class="flex items-center gap-2 rounded-lg bg-white px-3 py-2 font-medium text-charcoal/80 ring-1 ring-cream-200"><x-ico name="chat" class="h-4 w-4 text-[#25D366]" /> WA Pempek</a>
+                </div>
             </div>
         </nav>
     </div>

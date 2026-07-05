@@ -284,29 +284,8 @@
 </section>
 @endif
 
-{{-- ================= TESTIMONIALS ================= --}}
-@if($testimonials->count())
-<section class="py-16 lg:py-24">
-    <div class="container-x">
-        <x-section-heading eyebrow="Testimoni" title="Kata Mereka tentang Kami" center />
-        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            @foreach($testimonials as $t)
-                <figure class="card flex flex-col p-6 lg:p-7">
-                    <svg class="h-8 w-8 text-gold-400/60" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.5 6C5 6 3 8 3 10.5S5 15 7.5 15c.2 0 .4 0 .6-.05C7.5 16.5 6.3 17.5 5 18l.8 1.6C8.6 18.4 10.5 15.7 10.5 12v-1.5C10.5 8 8.5 6 7.5 6zm9 0C14 6 12 8 12 10.5S14 15 16.5 15c.2 0 .4 0 .6-.05C16.5 16.5 15.3 17.5 14 18l.8 1.6c2.8-1.2 4.7-3.9 4.7-7.6v-1.5C19.5 8 17.5 6 16.5 6z"/></svg>
-                    <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-charcoal/75">{{ $t->message }}</blockquote>
-                    <figcaption class="mt-5 flex items-center gap-3 border-t border-cream-200 pt-4">
-                        <span class="flex h-10 w-10 items-center justify-center rounded-full bg-maroon-700/10 font-display font-bold text-maroon-700">{{ mb_substr($t->name, 0, 1) }}</span>
-                        <span>
-                            <span class="block text-sm font-semibold text-charcoal">{{ $t->name }}</span>
-                            <span class="flex text-xs text-gold-500">@for($i = 0; $i < ($t->rating ?: 5); $i++)★@endfor</span>
-                        </span>
-                    </figcaption>
-                </figure>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
+{{-- ================= ULASAN / KOMENTAR PELANGGAN ================= --}}
+<x-reviews-wall :limit="6" eyebrow="Ulasan Pelanggan" title="Kata Mereka tentang Kami" />
 
 {{-- ================= INSTAGRAM FEED (dikelola dari admin) ================= --}}
 <x-instagram-feed title="Ikuti Kami di Instagram" :limit="8" muted />
