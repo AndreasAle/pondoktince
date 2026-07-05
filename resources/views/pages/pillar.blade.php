@@ -22,22 +22,22 @@
 <x-breadcrumbs />
 
 {{-- ============ HIGHLIGHTS STRIP ============ --}}
-<section class="border-b border-cream-200 bg-gradient-to-b from-cream-100 to-cream-50">
-    <div class="container-x grid grid-cols-2 gap-y-6 py-8 lg:grid-cols-4 lg:gap-y-0">
+<section class="border-y border-cream-200 bg-gradient-to-b from-cream-100 to-cream-50">
+    <div class="container-x grid grid-cols-2 gap-3 py-6 sm:gap-4 lg:grid-cols-4 lg:py-9">
         @foreach($content['highlights'] as $i => $h)
-            <div class="flex items-center gap-3.5 px-1 sm:px-4 lg:justify-center {{ $i > 0 ? 'lg:border-l lg:border-cream-200' : '' }}">
-                <x-icon-badge :name="$h['icon']" />
-                <span class="font-display text-[15px] font-semibold text-charcoal">{{ $h['text'] }}</span>
+            <div class="flex items-center gap-3 rounded-2xl border border-cream-200/70 bg-white/70 px-3 py-3 shadow-sm sm:px-4 lg:justify-center lg:rounded-none lg:border-0 lg:bg-transparent lg:py-0 lg:shadow-none {{ $i > 0 ? 'lg:border-l lg:border-cream-200' : '' }}">
+                <x-icon-badge :name="$h['icon']" size="sm" />
+                <span class="font-display text-[13px] font-semibold leading-tight text-charcoal sm:text-[15px]">{{ $h['text'] }}</span>
             </div>
         @endforeach
     </div>
 </section>
 
 {{-- ============ MAIN ARTICLE + STICKY CTA ============ --}}
-<section class="container-x py-16 lg:py-20">
-    <div class="grid gap-10 lg:grid-cols-3 lg:gap-14">
-        {{-- Article --}}
-        <article class="lg:col-span-2">
+<section class="container-x py-12 lg:py-20">
+    <div class="flex flex-col gap-8 lg:grid lg:grid-cols-3 lg:gap-12">
+        {{-- Article (di mobile tampil setelah kartu aksi) --}}
+        <article class="order-2 lg:order-1 lg:col-span-2">
             <div class="prose-content max-w-none text-[16px]">
                 @if($page?->intro_content)
                     {!! $page->intro_content !!}
@@ -64,10 +64,10 @@
             </div>
         </article>
 
-        {{-- Sticky CTA sidebar --}}
-        <aside class="lg:col-span-1">
-            <div class="lg:sticky lg:top-24 space-y-5">
-                <div class="relative overflow-hidden rounded-3xl lux-dark p-7 text-cream-50">
+        {{-- CTA card: tampil di ATAS pada mobile, sidebar sticky di desktop --}}
+        <aside class="order-1 lg:order-2 lg:col-span-1">
+            <div class="lg:sticky lg:top-24 space-y-4">
+                <div class="relative overflow-hidden rounded-3xl lux-dark p-6 text-cream-50 sm:p-7">
                     <div class="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full bg-gold-500/10 blur-2xl"></div>
                     <x-icon-badge :name="$isPempek ? 'fish' : 'utensils'" size="lg" tone="light" />
                     <h3 class="mt-5 font-display text-xl font-bold text-cream-50">{{ $isPempek ? 'Pesan Pempek Sekarang' : 'Kunjungi Pondok Tince' }}</h3>
@@ -100,16 +100,16 @@
 </section>
 
 {{-- ============ FEATURES ============ --}}
-<section class="bg-cream-100 py-16 lg:py-20">
+<section class="bg-cream-100 py-14 lg:py-20">
     <div class="container-x">
         <x-section-heading eyebrow="Kenapa Kami" :title="$isPempek ? 'Keunggulan Pempek Tince' : 'Kenapa Memilih Pondok Tince'" center />
-        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             @foreach($content['features'] as $f)
-                <div class="card flex flex-col items-center gap-4 p-7 text-center">
-                    <x-icon-badge :name="$f['icon']" size="lg" />
+                <div class="group flex flex-col items-center gap-3 rounded-2xl border border-cream-200/80 bg-white p-5 text-center transition duration-300 hover:-translate-y-1 hover:border-gold-300 hover:shadow-[0_20px_40px_-22px_rgba(74,22,21,0.4)] sm:gap-4 sm:p-7">
+                    <x-icon-badge :name="$f['icon']" />
                     <div>
-                        <h3 class="font-display text-lg font-semibold text-charcoal">{{ $f['title'] }}</h3>
-                        <p class="mt-1.5 text-sm text-charcoal/65">{{ $f['desc'] }}</p>
+                        <h3 class="font-display text-[15px] font-semibold leading-snug text-charcoal sm:text-lg">{{ $f['title'] }}</h3>
+                        <p class="mt-1.5 text-xs text-charcoal/65 sm:text-sm">{{ $f['desc'] }}</p>
                     </div>
                 </div>
             @endforeach
