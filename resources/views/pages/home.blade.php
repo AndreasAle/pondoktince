@@ -56,17 +56,24 @@
                         <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-cream-100/85 sm:text-lg">{{ $slide->subtitle }}</p>
                     @endif
                     @if($hasButtons)
-                        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+                        {{-- CTA utama: pill melayang, modern & tidak kaku --}}
+                        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
                             @if($slide->primary_label && $slide->primary_url)
-                                <a href="{{ $slide->primary_url }}" class="btn-gold w-full sm:w-auto">{{ $slide->primary_label }}</a>
+                                <a href="{{ $slide->primary_url }}" class="btn-gold shadow-xl shadow-maroon-900/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl">{{ $slide->primary_label }}</a>
                             @endif
                             @if($slide->show_whatsapp)
-                                <x-wa-button :message="$slide->whatsapp_message ?: ('Halo '.$siteSettings->site_name.', saya ingin bertanya.')" label="Booking via WhatsApp" source="home-hero" class="w-full sm:w-auto" />
-                            @endif
-                            @if($slide->secondary_label && $slide->secondary_url)
-                                <a href="{{ $slide->secondary_url }}" class="btn-outline w-full !border-cream-100/25 !bg-white/5 !text-cream-50 hover:!bg-white/15 sm:w-auto">{{ $slide->secondary_label }}</a>
+                                <x-wa-button :message="$slide->whatsapp_message ?: ('Halo '.$siteSettings->site_name.', saya ingin bertanya.')" label="Booking via WhatsApp" source="home-hero" class="shadow-xl shadow-black/25 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl" />
                             @endif
                         </div>
+                        {{-- CTA sekunder: link teks halus dengan panah --}}
+                        @if($slide->secondary_label && $slide->secondary_url)
+                            <div class="mt-6">
+                                <a href="{{ $slide->secondary_url }}" class="group/link inline-flex items-center gap-1.5 text-sm font-semibold text-cream-100/90 transition hover:text-gold-300">
+                                    {{ $slide->secondary_label }}
+                                    <svg class="h-4 w-4 transition-transform duration-300 group-hover/link:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg>
+                                </a>
+                            </div>
+                        @endif
                     @endif
                 </div>
             </div>
