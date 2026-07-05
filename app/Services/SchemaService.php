@@ -78,15 +78,23 @@ class SchemaService
     {
         $settings = SiteSetting::current();
 
-        return array_filter([
+        // Rating restoran dari testimoni (memberi bintang di hasil Google).
+        $ratingCount = \App\Models\Testimonial::active()->whereNotNull('rating')->count();
+        $ratingAvg = $ratingCount ? \App\Models\Testimonial::active()->whereNotNull('rating')->avg('rating') : null;
+
+        $schema = array_filter([
             '@context' => 'https://schema.org',
             '@type' => 'Restaurant',
+            '@id' => url('/').'#restaurant',
             'name' => $settings->site_name ?: 'Pondok Tince',
-            'image' => $settings->default_og_image_path ? asset('storage/'.$settings->default_og_image_path) : null,
+            'image' => $settings->default_og_image_path ? asset('storage/'.$settings->default_og_image_path) : ($settings->logo_path ? asset('storage/'.$settings->logo_path) : null),
             'url' => url('/'),
-            'servesCuisine' => 'Masakan Khas Palembang',
+            'servesCuisine' => ['Masakan Khas Palembang', 'Pempek', 'Kuliner Sumatera Selatan'],
             'priceRange' => 'Rp',
             'telephone' => $settings->whatsapp_number,
+            'email' => $settings->email ?: null,
+            'acceptsReservations' => 'True',
+            'hasMenu' => url('/menu'),
             'address' => $settings->address ? [
                 '@type' => 'PostalAddress',
                 'streetAddress' => $settings->address,
@@ -94,11 +102,88 @@ class SchemaService
                 'addressRegion' => 'Sumatera Selatan',
                 'addressCountry' => 'ID',
             ] : null,
+            'openingHoursSpecification' => $this->openingHoursSpec($settings->opening_hours) ?: null,
             'sameAs' => array_values(array_filter([
                 $settings->instagram_pondok,
                 $settings->instagram_pempek,
             ])) ?: null,
         ]);
+
+        if ($ratingCount > 0 && $ratingAvg) {
+            $schema['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (string) round((float) $ratingAvg, 1),
+                'reviewCount' => $ratingCount,
+                'bestRating' => '5',
+                'worstRating' => '1',
+            ];
+        }
+
+        return $schema;
+    }
+
+    /**
+     * Konversi jam buka (teks bebas dari admin) → openingHoursSpecification.
+     * Best-effort: baris yang tidak bisa diparse dilewati.
+     */
+    protected function openingHoursSpec(?array $hours): array
+    {
+        if (! $hours) {
+            return [];
+        }
+
+        $map = [
+            'minggu' => 'Sunday', 'senin' => 'Monday', 'selasa' => 'Tuesday',
+            'rabu' => 'Wednesday', 'kamis' => 'Thursday', 'jumat' => 'Friday',
+            "jum'at" => 'Friday', 'sabtu' => 'Saturday',
+        ];
+        $order = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        $spec = [];
+
+        foreach ($hours as $row) {
+            $day = mb_strtolower(trim($row['day'] ?? ''));
+            $time = trim($row['hours'] ?? '');
+            if (! $day || ! $time) {
+                continue;
+            }
+            if (! preg_match('/(\d{1,2})[.:](\d{2}).*?(\d{1,2})[.:](\d{2})/', $time, $m)) {
+                continue;
+            }
+            $opens = sprintf('%02d:%02d', (int) $m[1], (int) $m[2]);
+            $closes = sprintf('%02d:%02d', (int) $m[3], (int) $m[4]);
+
+            $dayList = [];
+            if (preg_match("/([a-z']+)\s*[-–]\s*([a-z']+)/u", $day, $dm)) {
+                $start = $map[trim($dm[1])] ?? null;
+                $end = $map[trim($dm[2])] ?? null;
+                $si = $start ? array_search($start, $order) : false;
+                $ei = $end ? array_search($end, $order) : false;
+                if ($si !== false && $ei !== false) {
+                    $i = $si;
+                    $guard = 0;
+                    while ($guard++ < 8) {
+                        $dayList[] = $order[$i];
+                        if ($i === $ei) {
+                            break;
+                        }
+                        $i = ($i + 1) % 7;
+                    }
+                }
+            } elseif (isset($map[$day])) {
+                $dayList[] = $map[$day];
+            }
+
+            if ($dayList) {
+                $spec[] = [
+                    '@type' => 'OpeningHoursSpecification',
+                    'dayOfWeek' => $dayList,
+                    'opens' => $opens,
+                    'closes' => $closes,
+                ];
+            }
+        }
+
+        return $spec;
     }
 
     /**
