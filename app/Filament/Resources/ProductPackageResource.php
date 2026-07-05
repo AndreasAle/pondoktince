@@ -48,8 +48,14 @@ class ProductPackageResource extends Resource
                     Forms\Components\TextInput::make('slug')->required(),
                     Forms\Components\TextInput::make('price')->label('Harga')->numeric()->prefix('Rp')
                         ->helperText('Kosongkan bila menyesuaikan.'),
+                    Forms\Components\TextInput::make('discount_price')->label('Harga diskon')->numeric()->prefix('Rp')
+                        ->helperText('Isi bila ada diskon; badge %% tampil otomatis.'),
                     Forms\Components\TextInput::make('price_note')->label('Catatan harga'),
-                    Forms\Components\Textarea::make('description')->label('Deskripsi')->rows(3)->columnSpanFull(),
+                    Forms\Components\TextInput::make('sold_count')->label('Jumlah terjual')->numeric(),
+                    Forms\Components\TextInput::make('weight')->label('Berat / satuan')->placeholder('mis. 1 kg'),
+                    Forms\Components\TextInput::make('stock')->label('Stok')->numeric(),
+                    Forms\Components\TextInput::make('short_description')->label('Deskripsi singkat')->maxLength(255)->columnSpanFull(),
+                    Forms\Components\Textarea::make('description')->label('Deskripsi lengkap')->rows(3)->columnSpanFull(),
                     Forms\Components\Repeater::make('contents')
                         ->label('Isi paket')
                         ->simple(Forms\Components\TextInput::make('item')->placeholder('mis. 10 pempek lenjer'))
@@ -60,9 +66,11 @@ class ProductPackageResource extends Resource
             Forms\Components\Section::make('Gambar & Status')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\FileUpload::make('image_path')->label('Foto paket')->image()->imageEditor()
+                    Forms\Components\FileUpload::make('image_path')->label('Foto utama')->image()->imageEditor()
                         ->directory('packages')->maxSize(4096),
                     Forms\Components\TextInput::make('image_alt')->label('Alt text (SEO)'),
+                    Forms\Components\FileUpload::make('gallery')->label('Galeri foto tambahan')->image()->multiple()
+                        ->reorderable()->directory('packages/gallery')->maxSize(4096)->columnSpanFull(),
                     Forms\Components\Toggle::make('is_active')->label('Aktif')->default(true),
                     Forms\Components\Toggle::make('is_frozen')->label('Frozen'),
                     Forms\Components\Toggle::make('is_recommended')->label('Rekomendasi'),

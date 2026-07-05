@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PempekTinceController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TrackingController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,14 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Pondok Tince core
 Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+
+// Marketplace product detail pages + customer reviews (checkout via WhatsApp)
+Route::get('/menu/{slug}', [ProductController::class, 'menuItem'])
+    ->where('slug', '[A-Za-z0-9\-]+')->name('product.menu');
+Route::get('/paket/{slug}', [ProductController::class, 'package'])
+    ->where('slug', '[A-Za-z0-9\-]+')->name('product.package');
+Route::post('/produk/review', [ProductController::class, 'review'])
+    ->middleware('throttle:5,1')->name('product.review');
 Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
 Route::post('/booking', [BookingController::class, 'store'])
     ->middleware('throttle:10,1')->name('booking.store');

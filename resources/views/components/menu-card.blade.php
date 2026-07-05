@@ -1,61 +1,52 @@
 @props(['item', 'source' => 'menu'])
 
 @php
-    $wa = app(\App\Services\WhatsAppService::class);
-    $msg = $wa->fillTemplate(
-        $item->wa_message_template ?: 'Halo, saya ingin pesan {name}. Apakah tersedia?',
-        ['name' => $item->name]
-    );
+    $disc = $item->discountPercent();
+    $avg = $item->ratingAvg();
+    $sold = $item->sold_count;
 @endphp
 
-<article class="card group flex flex-col overflow-hidden">
-    <div class="relative aspect-[4/3] overflow-hidden bg-cream-100">
+<a href="{{ route('product.menu', $item->slug) }}" class="card group flex flex-col overflow-hidden">
+    <div class="relative aspect-square overflow-hidden bg-cream-100">
         @if($item->image_path)
             <img src="{{ media_url($item->image_path) }}" alt="{{ $item->image_alt ?: $item->name }}"
                  loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
         @else
-            <div class="placeholder-food">
-                <svg class="h-10 w-10 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v7a2 2 0 002 2h0a2 2 0 002-2V3M7 12v9M17 3c-1.7 0-3 2-3 5s1 4 3 4v9"/>
-                </svg>
-            </div>
+            <div class="placeholder-food"><x-ico name="utensils" class="h-10 w-10 opacity-70" /></div>
         @endif
 
-        {{-- gradient scrim so badges stay legible over any photo --}}
-        <div class="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/25 to-transparent"></div>
+        @if($disc)
+            <span class="absolute left-0 top-3 rounded-r-full bg-maroon-700 py-1 pl-2.5 pr-3 text-[11px] font-bold text-cream-50 shadow">-{{ $disc }}%</span>
+        @endif
 
-        <div class="absolute left-3 top-3 flex flex-wrap gap-1.5">
-            @if($item->is_best_seller)<span class="rounded-full bg-maroon-700/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-cream-50 shadow-sm">Best Seller</span>@endif
-            @if($item->is_favorite)<span class="rounded-full bg-gold-500 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-charcoal shadow-sm">Favorit</span>@endif
-            @if($item->is_new)<span class="rounded-full bg-green-600 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">Baru</span>@endif
-            @if($item->is_spicy)<span class="rounded-full bg-red-600 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">Pedas</span>@endif
+        <div class="absolute right-2 top-2 flex flex-col items-end gap-1">
+            @if($item->is_best_seller)<span class="rounded-full bg-gold-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-charcoal shadow-sm">Best</span>@endif
+            @if($item->is_new)<span class="rounded-full bg-green-600 px-2 py-0.5 text-[10px] font-semibold uppercase text-white shadow-sm">Baru</span>@endif
+            @if($item->is_spicy)<span class="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-semibold uppercase text-white shadow-sm">Pedas</span>@endif
         </div>
     </div>
 
-    <div class="flex flex-1 flex-col p-4">
-        <h3 class="font-display text-lg font-semibold text-charcoal">{{ $item->name }}</h3>
-        @if($item->short_description || $item->description)
-            <p class="mt-1 line-clamp-2 text-sm text-charcoal/65">{{ $item->short_description ?: strip_tags($item->description) }}</p>
-        @endif
+    <div class="flex flex-1 flex-col p-3 sm:p-4">
+        <h3 class="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-charcoal transition group-hover:text-maroon-700">{{ $item->name }}</h3>
 
-        <div class="mt-3 flex items-center justify-between">
-            <div>
-                @if($item->discount_price)
-                    <span class="text-sm text-charcoal/40 line-through">{{ rupiah($item->price) }}</span>
-                    <span class="font-semibold text-maroon-700">{{ rupiah($item->discount_price) }}</span>
-                @elseif($item->price)
-                    <span class="font-semibold text-maroon-700">{{ rupiah($item->price) }}</span>
-                @else
-                    <span class="text-sm text-charcoal/55">Menyesuaikan</span>
-                @endif
-                @if($item->price_note)<span class="text-xs text-charcoal/45"> / {{ $item->price_note }}</span>@endif
-            </div>
+        <div class="mt-2">
+            @if($item->discount_price)
+                <span class="font-display text-base font-bold text-maroon-700">{{ rupiah($item->discount_price) }}</span>
+                <span class="ml-1 text-xs text-charcoal/40 line-through">{{ rupiah($item->price) }}</span>
+            @elseif($item->price)
+                <span class="font-display text-base font-bold text-maroon-700">{{ rupiah($item->price) }}</span>
+            @else
+                <span class="text-sm font-semibold text-charcoal/55">Menyesuaikan</span>
+            @endif
         </div>
 
-        <div class="mt-4">
-            <x-wa-button :message="$msg" :brand="$item->brand?->key"
-                :label="$item->cta_label ?: 'Pesan'" :source="$source"
-                class="w-full !py-2.5 text-xs" />
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-charcoal/50">
+            @if($avg)
+                <span class="flex items-center gap-0.5"><span class="text-gold-500">★</span>{{ $avg }}</span>
+            @endif
+            @if($avg && $sold)<span>·</span>@endif
+            @if($sold)<span>{{ $sold }}+ terjual</span>@endif
+            @if(!$avg && !$sold)<span class="text-maroon-600/70">Lihat detail →</span>@endif
         </div>
     </div>
-</article>
+</a>

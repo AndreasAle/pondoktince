@@ -1,60 +1,51 @@
 @props(['package', 'source' => 'pempek-tince'])
 
 @php
-    $wa = app(\App\Services\WhatsAppService::class);
-    $msg = $wa->fillTemplate(
-        $package->wa_message_template ?: 'Halo Pempek Tince, saya ingin pesan {name}. Mohon info stok & pengiriman.',
-        ['name' => $package->name]
-    );
+    $disc = $package->discountPercent();
+    $avg = $package->ratingAvg();
+    $sold = $package->sold_count;
 @endphp
 
-<article class="card group flex flex-col overflow-hidden {{ $package->is_recommended ? 'ring-2 ring-gold-400' : '' }}">
-    <div class="relative aspect-[4/3] overflow-hidden bg-cream-100">
+<a href="{{ route('product.package', $package->slug) }}" class="card group flex flex-col overflow-hidden {{ $package->is_recommended ? 'ring-1 ring-gold-300' : '' }}">
+    <div class="relative aspect-square overflow-hidden bg-cream-100">
         @if($package->image_path)
             <img src="{{ media_url($package->image_path) }}" alt="{{ $package->image_alt ?: $package->name }}"
-                 loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                 loading="lazy" class="h-full w-full object-cover transition duration-700 group-hover:scale-110">
         @else
             <div class="placeholder-food">
-                <svg class="h-10 w-10 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 7l1.5 12a2 2 0 002 1.8h5a2 2 0 002-1.8L20 7M9 7V5a3 3 0 016 0v2"/>
-                </svg>
+                <svg class="h-10 w-10 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 7l1.5 12a2 2 0 002 1.8h5a2 2 0 002-1.8L20 7M9 7V5a3 3 0 016 0v2"/></svg>
             </div>
         @endif
-        <div class="absolute left-3 top-3 flex gap-1">
-            @if($package->is_recommended)<span class="rounded-full bg-gold-500 px-2.5 py-1 text-[11px] font-semibold text-charcoal">Rekomendasi</span>@endif
-            @if($package->is_frozen)<span class="rounded-full bg-sky-600 px-2.5 py-1 text-[11px] font-semibold text-white">Frozen</span>@endif
+
+        @if($disc)
+            <span class="absolute left-0 top-3 rounded-r-full bg-maroon-700 py-1 pl-2.5 pr-3 text-[11px] font-bold text-cream-50 shadow">-{{ $disc }}%</span>
+        @endif
+
+        <div class="absolute right-2 top-2 flex flex-col items-end gap-1">
+            @if($package->is_recommended)<span class="rounded-full bg-gold-500 px-2 py-0.5 text-[10px] font-semibold uppercase text-charcoal shadow-sm">Rekomendasi</span>@endif
+            @if($package->is_frozen)<span class="rounded-full bg-sky-600 px-2 py-0.5 text-[10px] font-semibold uppercase text-white shadow-sm">Frozen</span>@endif
         </div>
     </div>
 
-    <div class="flex flex-1 flex-col p-5">
-        <h3 class="font-display text-xl font-semibold text-charcoal">{{ $package->name }}</h3>
-        @if($package->description)
-            <p class="mt-1 text-sm text-charcoal/65">{{ strip_tags($package->description) }}</p>
-        @endif
+    <div class="flex flex-1 flex-col p-3 sm:p-4">
+        <h3 class="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-charcoal transition group-hover:text-maroon-700">{{ $package->name }}</h3>
 
-        @if(is_array($package->contents) && count($package->contents))
-            <ul class="mt-3 space-y-1.5 text-sm text-charcoal/70">
-                @foreach($package->contents as $c)
-                    <li class="flex items-start gap-2">
-                        <svg class="mt-0.5 h-4 w-4 flex-none text-gold-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0L3.3 9.7a1 1 0 011.4-1.4l3.1 3.1 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd"/></svg>
-                        <span>{{ is_array($c) ? ($c['item'] ?? reset($c)) : $c }}</span>
-                    </li>
-                @endforeach
-            </ul>
-        @endif
-
-        <div class="mt-4 flex items-baseline gap-1">
-            @if($package->price)
-                <span class="font-display text-2xl font-bold text-maroon-700">{{ rupiah($package->price) }}</span>
-                @if($package->price_note)<span class="text-xs text-charcoal/50">/ {{ $package->price_note }}</span>@endif
+        <div class="mt-2">
+            @if($package->discount_price)
+                <span class="font-display text-base font-bold text-maroon-700">{{ rupiah($package->discount_price) }}</span>
+                <span class="ml-1 text-xs text-charcoal/40 line-through">{{ rupiah($package->price) }}</span>
+            @elseif($package->price)
+                <span class="font-display text-base font-bold text-maroon-700">{{ rupiah($package->price) }}</span>
             @else
-                <span class="text-sm text-charcoal/60">Harga menyesuaikan — hubungi admin</span>
+                <span class="text-sm font-semibold text-charcoal/55">Menyesuaikan</span>
             @endif
         </div>
 
-        <div class="mt-4 pt-1">
-            <x-wa-button :message="$msg" brand="pempek-tince"
-                :label="$package->cta_label ?: 'Pesan Pempek'" :source="$source" class="w-full" />
+        <div class="mt-2 flex items-center gap-2 text-[11px] text-charcoal/50">
+            @if($avg)<span class="flex items-center gap-0.5"><span class="text-gold-500">★</span>{{ $avg }}</span>@endif
+            @if($avg && $sold)<span>·</span>@endif
+            @if($sold)<span>{{ $sold }}+ terjual</span>@endif
+            @if(!$avg && !$sold)<span class="text-maroon-600/70">Lihat detail →</span>@endif
         </div>
     </div>
-</article>
+</a>

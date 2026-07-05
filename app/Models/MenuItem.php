@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasProductReviews;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MenuItem extends Model
 {
-    use SoftDeletes;
+    use HasProductReviews, SoftDeletes;
 
     protected $guarded = [];
 
@@ -22,7 +23,14 @@ class MenuItem extends Model
         'is_new' => 'boolean',
         'is_available' => 'boolean',
         'sort_order' => 'integer',
+        'sold_count' => 'integer',
+        'stock' => 'integer',
     ];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     public function brand()
     {

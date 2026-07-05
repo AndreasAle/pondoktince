@@ -131,6 +131,59 @@ class SchemaService
         ]);
     }
 
+    /**
+     * Full Product schema with aggregateRating + reviews (Google rich stars).
+     *
+     * @param  \Illuminate\Support\Collection  $reviews  approved ProductReview collection
+     */
+    public function productWithReviews(
+        string $name,
+        ?string $description,
+        ?string $image,
+        int|float|string|null $price,
+        ?float $ratingAvg,
+        int $ratingCount,
+        $reviews,
+        string $category = 'Pempek Palembang'
+    ): array {
+        $schema = array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $name,
+            'description' => $description ? strip_tags($description) : null,
+            'image' => $image,
+            'category' => $category,
+            'brand' => ['@type' => 'Brand', 'name' => SiteSetting::current()->site_name ?: 'Pondok Tince'],
+            'offers' => $price ? [
+                '@type' => 'Offer',
+                'price' => (string) $price,
+                'priceCurrency' => 'IDR',
+                'availability' => 'https://schema.org/InStock',
+                'url' => url()->current(),
+            ] : null,
+        ]);
+
+        if ($ratingCount > 0 && $ratingAvg) {
+            $schema['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => (string) $ratingAvg,
+                'reviewCount' => $ratingCount,
+                'bestRating' => '5',
+                'worstRating' => '1',
+            ];
+
+            $schema['review'] = collect($reviews)->take(10)->map(fn ($r) => [
+                '@type' => 'Review',
+                'author' => ['@type' => 'Person', 'name' => $r->name],
+                'datePublished' => optional($r->created_at)->toDateString(),
+                'reviewRating' => ['@type' => 'Rating', 'ratingValue' => (string) $r->rating, 'bestRating' => '5'],
+                'reviewBody' => (string) $r->comment,
+            ])->values()->all();
+        }
+
+        return $schema;
+    }
+
     public function foodProduct(ProductPackage $pkg): array
     {
         return array_filter([

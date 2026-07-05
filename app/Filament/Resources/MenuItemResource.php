@@ -81,6 +81,11 @@ class MenuItemResource extends Resource
                     Forms\Components\TextInput::make('price_note')
                         ->label('Catatan harga')
                         ->placeholder('mis. per porsi'),
+                    Forms\Components\TextInput::make('sold_count')->label('Jumlah terjual')->numeric()
+                        ->helperText('Tampil sebagai "X+ terjual".'),
+                    Forms\Components\TextInput::make('weight')->label('Berat / satuan')->placeholder('mis. 500 gr'),
+                    Forms\Components\TextInput::make('stock')->label('Stok')->numeric()
+                        ->helperText('Kosongkan bila tidak ingin menampilkan stok.'),
                     Forms\Components\FileUpload::make('image_path')
                         ->label('Foto menu')
                         ->image()
