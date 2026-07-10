@@ -51,16 +51,23 @@
                         $msg = 'Halo '.($brandKey === 'pempek-tince' ? 'Pempek Tince' : 'Pondok Tince').', saya mau pesan '.$item->name
                             .($item->price ? ' ('.rupiah($item->price).')' : '').'. Apakah tersedia?';
                     @endphp
+                    @php $photo = $item->primaryImage(); @endphp
                     <a href="{{ $wa->url($msg, $brandKey) }}" target="_blank" rel="noopener nofollow"
                        @click="window.trackWhatsApp({ source_page: 'menu-{{ $brandKey }}', button_label: 'Pesan {{ addslashes($item->name) }}', brand_key: '{{ $brandKey }}', destination_number: '{{ $wa->numberFor($brandKey) }}' })"
-                       class="group flex items-baseline gap-2 border-b border-dashed border-cream-200 py-3 transition hover:border-maroon-300">
-                        <span class="font-medium text-charcoal transition group-hover:text-maroon-700">
-                            {{ $item->name }}
-                            @if($item->is_best_seller)<span class="ml-1 rounded bg-gold-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gold-600 align-middle">Best</span>@endif
-                            @if($item->price_note)<span class="ml-1 text-[11px] font-normal text-charcoal/45">· {{ $item->price_note }}</span>@endif
+                       class="group flex items-center gap-3 border-b border-dashed border-cream-200 py-3 transition hover:border-maroon-300 sm:gap-4">
+                        @if($photo)
+                            <img src="{{ media_url($photo) }}" alt="{{ $item->name }}" loading="lazy"
+                                 class="h-14 w-14 flex-none rounded-xl object-cover shadow-sm ring-1 ring-cream-200 transition group-hover:ring-maroon-300 sm:h-16 sm:w-16" />
+                        @endif
+                        <span class="flex flex-1 items-baseline gap-2">
+                            <span class="font-medium text-charcoal transition group-hover:text-maroon-700">
+                                {{ $item->name }}
+                                @if($item->is_best_seller)<span class="ml-1 rounded bg-gold-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gold-600 align-middle">Best</span>@endif
+                                @if($item->price_note)<span class="ml-1 text-[11px] font-normal text-charcoal/45">· {{ $item->price_note }}</span>@endif
+                            </span>
+                            <span class="min-w-4 flex-1 translate-y-[-3px] border-b border-dotted border-cream-300"></span>
+                            <span class="flex-none font-display text-sm font-bold text-maroon-700">{{ $item->price ? rupiah($item->price) : 'Menyesuaikan' }}</span>
                         </span>
-                        <span class="min-w-4 flex-1 translate-y-[-3px] border-b border-dotted border-cream-300"></span>
-                        <span class="flex-none font-display text-sm font-bold text-maroon-700">{{ $item->price ? rupiah($item->price) : 'Menyesuaikan' }}</span>
                     </a>
                 @endforeach
             </div>

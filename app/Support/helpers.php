@@ -55,6 +55,11 @@ if (! function_exists('media_url')) {
             return $path;
         }
 
+        // Foto statis yang di-commit ke repo (public/img/...) — dilayani langsung.
+        if (str_starts_with($path, 'img/')) {
+            return asset($path);
+        }
+
         return asset('storage/'.ltrim($path, '/'));
     }
 }

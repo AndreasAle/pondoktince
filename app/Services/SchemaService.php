@@ -235,7 +235,7 @@ class SchemaService
             '@type' => 'MenuItem',
             'name' => $item->name,
             'description' => $item->short_description ?: strip_tags((string) $item->description),
-            'image' => $item->image_path ? asset('storage/'.$item->image_path) : null,
+            'image' => $item->image_path ? media_url($item->image_path) : null,
             'offers' => $item->price ? [
                 '@type' => 'Offer',
                 'price' => (string) ($item->discount_price ?: $item->price),
