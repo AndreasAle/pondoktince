@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('content')
-@php $wa = app(\App\Services\WhatsAppService::class); @endphp
+<style>[x-cloak]{display:none!important}</style>
 
 <x-page-hero
     :eyebrow="$brandKey === 'pempek-tince' ? 'Pempek Tince' : 'Menu Pondok Tince'"
@@ -13,7 +13,7 @@
 
 <x-breadcrumbs />
 
-<div class="container-x py-10 lg:py-14" x-data="{ cat: 'all' }">
+<div class="container-x py-10 lg:py-14" x-data="{ cat: 'all', open: false, item: {} }">
     {{-- Filter kategori (scroll horizontal di mobile) --}}
     @if($categories->count() > 1)
         <div class="sticky top-16 z-30 -mx-5 mb-8 border-b border-cream-200 bg-cream-50/95 px-5 py-3 backdrop-blur lg:top-20">
@@ -31,8 +31,8 @@
     @endif
 
     <p class="mb-8 flex items-center gap-2 text-xs text-charcoal/50">
-        <x-ico name="chat" class="h-4 w-4 text-[#25D366]" />
-        Klik item untuk pesan langsung via WhatsApp. Harga belum termasuk PB1 (pajak).
+        <x-ico name="utensils" class="h-4 w-4 text-maroon-500" />
+        Ketuk menu untuk melihat foto &amp; detail. Harga belum termasuk PB1 (pajak).
     </p>
 
     @forelse($categories as $category)
@@ -48,16 +48,26 @@
             <div class="grid gap-x-10 sm:grid-cols-2">
                 @foreach($category->activeItems as $item)
                     @php
-                        $msg = 'Halo '.($brandKey === 'pempek-tince' ? 'Pempek Tince' : 'Pondok Tince').', saya mau pesan '.$item->name
-                            .($item->price ? ' ('.rupiah($item->price).')' : '').'. Apakah tersedia?';
+                        $photo = $item->primaryImage();
+                        $payload = [
+                            'name'  => $item->name,
+                            'price' => $item->price ? rupiah($item->price) : 'Menyesuaikan',
+                            'note'  => $item->price_note,
+                            'best'  => (bool) $item->is_best_seller,
+                            'cat'   => $category->name,
+                            'img'   => $photo ? media_url($photo) : null,
+                            'desc'  => $item->short_description ?: trim(strip_tags((string) $item->description)),
+                        ];
                     @endphp
-                    @php $photo = $item->primaryImage(); @endphp
-                    <a href="{{ $wa->url($msg, $brandKey) }}" target="_blank" rel="noopener nofollow"
-                       @click="window.trackWhatsApp({ source_page: 'menu-{{ $brandKey }}', button_label: 'Pesan {{ addslashes($item->name) }}', brand_key: '{{ $brandKey }}', destination_number: '{{ $wa->numberFor($brandKey) }}' })"
-                       class="group flex items-center gap-3 border-b border-dashed border-cream-200 py-3 transition hover:border-maroon-300 sm:gap-4">
+                    <button type="button" @click='item = @json($payload); open = true'
+                       class="group flex w-full items-center gap-3 border-b border-dashed border-cream-200 py-3 text-left transition hover:border-maroon-300 sm:gap-4">
                         @if($photo)
                             <img src="{{ media_url($photo) }}" alt="{{ $item->name }}" loading="lazy"
                                  class="h-14 w-14 flex-none rounded-xl object-cover shadow-sm ring-1 ring-cream-200 transition group-hover:ring-maroon-300 sm:h-16 sm:w-16" />
+                        @else
+                            <span class="flex h-14 w-14 flex-none items-center justify-center rounded-xl bg-cream-100 ring-1 ring-cream-200 sm:h-16 sm:w-16">
+                                <svg class="h-6 w-6 text-maroon-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M8 12v9M17 3c-1.5 0-3 1.8-3 5s.6 5 3 5m0 0v8"/></svg>
+                            </span>
                         @endif
                         <span class="flex flex-1 items-baseline gap-2">
                             <span class="font-medium text-charcoal transition group-hover:text-maroon-700">
@@ -68,7 +78,7 @@
                             <span class="min-w-4 flex-1 translate-y-[-3px] border-b border-dotted border-cream-300"></span>
                             <span class="flex-none font-display text-sm font-bold text-maroon-700">{{ $item->price ? rupiah($item->price) : 'Menyesuaikan' }}</span>
                         </span>
-                    </a>
+                    </button>
                 @endforeach
             </div>
         </section>
@@ -92,5 +102,53 @@
             <a href="{{ route('pempek.index') }}" class="btn-gold flex-none">Lihat Pempek Tince</a>
         </div>
     @endif
+
+    {{-- Popup detail menu (khusus halaman menu / QR scan — tanpa link WhatsApp) --}}
+    <div x-cloak x-show="open" @keydown.escape.window="open = false"
+         class="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-4">
+        <div x-show="open" x-transition.opacity @click="open = false"
+             class="absolute inset-0 bg-charcoal/70 backdrop-blur-sm"></div>
+
+        <div x-show="open"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             class="relative w-full max-w-md overflow-hidden rounded-t-3xl bg-cream-50 shadow-2xl sm:rounded-3xl">
+
+            <button type="button" @click="open = false" aria-label="Tutup"
+                    class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-charcoal/40 text-cream-50 backdrop-blur transition hover:bg-charcoal/60">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+
+            {{-- Foto / placeholder --}}
+            <template x-if="item.img">
+                <img :src="item.img" :alt="item.name" class="h-60 w-full object-cover" />
+            </template>
+            <template x-if="!item.img">
+                <div class="flex h-40 w-full items-center justify-center bg-gradient-to-br from-cream-100 to-cream-200">
+                    <svg class="h-12 w-12 text-maroon-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M8 12v9M17 3c-1.5 0-3 1.8-3 5s.6 5 3 5m0 0v8"/></svg>
+                </div>
+            </template>
+
+            <div class="p-6">
+                <p class="text-[11px] font-semibold uppercase tracking-wide text-gold-600" x-text="item.cat"></p>
+                <div class="mt-1 flex items-start justify-between gap-3">
+                    <h3 class="font-display text-2xl font-bold text-charcoal" x-text="item.name"></h3>
+                    <span x-show="item.best" class="mt-1 flex-none rounded bg-gold-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gold-600">Best</span>
+                </div>
+                <p x-show="item.note" class="mt-1 text-xs text-charcoal/50" x-text="item.note"></p>
+
+                <div class="mt-4 flex items-baseline gap-2">
+                    <span class="font-display text-3xl font-bold text-maroon-700" x-text="item.price"></span>
+                </div>
+
+                <p x-show="item.desc" class="mt-3 text-sm leading-relaxed text-charcoal/70" x-text="item.desc"></p>
+
+                <div class="mt-5 border-t border-cream-200 pt-4 text-[11px] text-charcoal/40">
+                    Harga belum termasuk PB1 (pajak). Silakan pesan langsung ke pramusaji.
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
