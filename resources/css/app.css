@@ -9,15 +9,15 @@
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Playfair Display', ui-serif, Georgia, serif;
 
-    /* Brand palette — warm premium culinary (Palembang) */
-    --color-maroon-50: #fbf3f2;
-    --color-maroon-100: #f6e0dd;
-    --color-maroon-300: #d99b93;
-    --color-maroon-500: #a83d33;
-    --color-maroon-600: #8f2f26;
-    --color-maroon-700: #7a1f1f;
-    --color-maroon-800: #611a19;
-    --color-maroon-900: #4a1615;
+    /* Brand palette — merah khas Pondok Tince (dari label brand) */
+    --color-maroon-50: #fdf2f2;
+    --color-maroon-100: #f9dbda;
+    --color-maroon-300: #ea8d8a;
+    --color-maroon-500: #d63034;
+    --color-maroon-600: #c71f24;
+    --color-maroon-700: #b8161b;
+    --color-maroon-800: #931217;
+    --color-maroon-900: #6f0e12;
 
     --color-gold-300: #e2c878;
     --color-gold-400: #d4af52;

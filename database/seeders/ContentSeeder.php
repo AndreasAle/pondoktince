@@ -44,7 +44,7 @@ class ContentSeeder extends Seeder
         SiteSetting::updateOrCreate(['id' => 1], [
             'site_name' => 'Pondok Tince',
             'tagline' => 'Kuliner khas Palembang untuk keluarga, acara, dan oleh-oleh.',
-            'primary_color' => '#7a1f1f',
+            'primary_color' => '#b8161b',
             'accent_color' => '#c79a3a',
             'address' => 'Palembang, Sumatera Selatan. [GANTI dengan alamat lengkap]',
             'email' => 'halo@pondoktince.com', // [GANTI]
@@ -69,7 +69,7 @@ class ContentSeeder extends Seeder
             'name' => 'Pondok Tince',
             'slug' => 'pondok-tince',
             'description' => 'Tempat makan khas Palembang untuk dine-in bersama keluarga, rombongan, dan acara. Cita rasa autentik dengan suasana yang nyaman.',
-            'brand_color' => '#7a1f1f',
+            'brand_color' => '#b8161b',
             'instagram' => 'https://www.instagram.com/pondoktince.plg/',
             'whatsapp_number' => '6281234567890', // [GANTI]
             'whatsapp_default_message' => 'Halo Pondok Tince, saya ingin bertanya.',

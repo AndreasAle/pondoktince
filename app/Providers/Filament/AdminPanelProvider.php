@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->brandName('Pondok Tince CMS')
             ->colors([
-                'primary' => Color::hex('#7a1f1f'),   // maroon
+                'primary' => Color::hex('#b8161b'),   // merah brand Pondok Tince
                 'gray' => Color::Stone,
                 'warning' => Color::Amber,             // gold accent
             ])
