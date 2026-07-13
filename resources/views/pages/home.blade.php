@@ -308,7 +308,7 @@
 @if($gallery->count())
 <section class="bg-cream-100 py-16 lg:py-24">
     <div class="container-x">
-        <x-section-heading eyebrow="Galeri" title="Suasana &amp; Sajian Kami" center />
+        <x-section-heading eyebrow="Galeri" title="Suasana & Sajian Kami" center />
         <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             @foreach($gallery as $g)
                 <div class="group aspect-square overflow-hidden rounded-2xl bg-cream-200">
@@ -332,7 +332,7 @@
 <section class="py-16 lg:py-24">
     <div class="container-x grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-            <x-section-heading eyebrow="Lokasi" title="Mampir &amp; Rasakan Kehangatannya" />
+            <x-section-heading eyebrow="Lokasi" title="Mampir & Rasakan Kehangatannya" />
             <p class="mt-4 text-charcoal/70">{{ $s->address ?: 'Alamat lengkap akan tampil di sini setelah diisi dari admin panel.' }}</p>
             <div class="mt-7 flex flex-wrap gap-3">
                 @if($s->maps_link)<a href="{{ $s->maps_link }}" target="_blank" rel="noopener" class="btn-primary">Buka Google Maps</a>@endif
